@@ -1,6 +1,6 @@
     org 0x7C00
 
-    %define GAME_SEGMENT 0x100
+    %include "includes/constants.asm"
 
     BITS 16
 
@@ -21,6 +21,12 @@
 	mov dh, 0
 	mov dl, 0x80
 	int 0x13
+
+    ; setting up the stack segment
+    mov bx, STACK_BASE_ADDR
+    mov ss, bx
+    mov sp, STACK_POINTER_ADDR
+    mov bp, sp
 
     ; make the processor execute the game
     jmp GAME_SEGMENT:0x0
