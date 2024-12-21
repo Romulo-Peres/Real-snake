@@ -10,17 +10,17 @@
     int 0x10
 
     mov bx, GAME_SEGMENT
-	mov es, bx
-	mov bx, 0
+    mov es, bx
+    mov bx, 0
 	
     ; load the game from pendrive
-	mov ah, 0x02
-	mov al, 1
-	mov ch, 0
-	mov cl, 2
-	mov dh, 0
-	mov dl, 0x80
-	int 0x13
+    mov ah, 0x02
+    mov al, 1
+    mov ch, 0
+    mov cl, 2
+    mov dh, 0
+    mov dl, 0x80
+    int 0x13
 
     ; setting up the stack segment
     mov bx, STACK_BASE_ADDR
