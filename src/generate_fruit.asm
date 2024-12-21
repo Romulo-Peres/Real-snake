@@ -53,7 +53,7 @@ generate_fruit:
 
     ; craft the fruit char
     mov al, FRUIT_CHAR
-    mov ah, 0x0F
+    mov ah, 0x04
 
     mov [es:bx], ax
 

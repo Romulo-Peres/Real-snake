@@ -4,3 +4,7 @@
 %define FRUIT_CHAR '#'
 %define SNAKE_BODY_CHAR '*'
 %define SNAKE_HEAD_CHAR '@'
+%define DIRECTION_LEFT 0x0
+%define DIRECTION_UP 0x1
+%define DIRECTION_RIGHT 0x2
+%define DIRECTION_DOWN 0x3
