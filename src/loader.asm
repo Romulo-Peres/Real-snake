@@ -15,7 +15,7 @@
 	
     ; load the game from pendrive
     mov ah, 0x02
-    mov al, 1
+    mov al, 2
     mov ch, 0
     mov cl, 2
     mov dh, 0
@@ -28,6 +28,9 @@
     mov sp, STACK_POINTER_ADDR
     mov bp, sp
 
+    mov bx, GAME_SEGMENT
+    mov ds, bx
+    
     ; make the processor execute the game
     jmp GAME_SEGMENT:0x0
 
