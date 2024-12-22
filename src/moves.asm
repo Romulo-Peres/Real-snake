@@ -15,6 +15,7 @@ move:
     ; move a snake head char at the new head position
     mov dx, SNAKE_HEAD_CHAR
     call place_element_at
+    push ax
 
     call video_pos_to_pos
 
@@ -35,6 +36,7 @@ not_direction_right:
     ; move a snake head char at the new head position
     mov dx, SNAKE_HEAD_CHAR
     call place_element_at
+    push ax
 
     call video_pos_to_pos
 
@@ -54,6 +56,7 @@ not_direction_down:
     ; move a snake head char at the new head position
     mov dx, SNAKE_HEAD_CHAR
     call place_element_at
+    push ax
 
     call video_pos_to_pos
 
@@ -74,12 +77,21 @@ not_direction_up:
 
     mov dx, SNAKE_HEAD_CHAR
     call place_element_at
+    push ax
 
     call video_pos_to_pos
     
     mov [head_x_pos], bx
-move_end:    
+move_end:
+    pop ax
+    call check_collision
+
+    cmp ah, 0x1
+
+    je move_return
+
     call remove_tail
+move_return:
     ret
 
 remove_tail:

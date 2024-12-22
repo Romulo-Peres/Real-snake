@@ -2,8 +2,10 @@
 ; bx - head X position
 ; cx - head Y position
 ; dx - element
+;
+; @returns
+; al - the char that was replaced
 place_element_at:
-    push ax
     push bx
     push cx
     push dx
@@ -15,11 +17,14 @@ place_element_at:
     
     pop dx
 
+    mov ax, [es:bx]
+    push ax
+
     mov al, dl
     mov ah, 0x02
     mov [es:bx], ax
 
+    pop ax
     pop cx
     pop bx
-    pop ax
     ret
