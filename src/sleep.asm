@@ -1,5 +1,5 @@
 %define FIRST_TIMER_COUNTER 1
-%define TIMER_COUNTER_THRESHOLD 9
+%define TIMER_COUNTER_THRESHOLD 4
 
 sleep:
     ; save used registers
