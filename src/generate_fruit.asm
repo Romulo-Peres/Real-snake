@@ -14,6 +14,8 @@ generate_fruit:
     push es
     mov bp, sp
 
+    push cx
+
     ; get system timer counter
     mov ah, 0x0
     int 0x1A
@@ -24,6 +26,8 @@ generate_fruit:
 
     ; add value to offset
     add [last_fruit_offset], dx
+
+    pop cx
 
     ; calculate the video buffer size
     mov ax, bx
