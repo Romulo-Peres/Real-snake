@@ -1,4 +1,4 @@
-    %include "../includes/constants.asm"
+    %include "includes/constants.asm"
     %define DIRECTION 1
     %define X_AXIS_POINT 2
     %define Y_AXIS_POINT 3
