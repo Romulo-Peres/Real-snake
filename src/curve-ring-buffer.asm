@@ -83,16 +83,7 @@ check_curve:
 
     mov ax, [es:bx]
 
-    ; increment read pointer by 2
-    add bx, 0x2
-
-    cmp bx, MAX_RING_BUFFER_SIZE
-    jl read_overflow_end
-
-read_overflow:
-    mov bx, 0x0
-read_overflow_end:
-    mov [read_ptr], bx
+    push bx
 
     ; unpack positions and direction
     ; from ring buffer value
@@ -118,13 +109,27 @@ read_overflow_end:
     mov ah, 0x1
     mov al, [bp-DIRECTION]
 
+    pop bx
+    ; increment read pointer by 2
+    add bx, 0x2
+
+    cmp bx, MAX_RING_BUFFER_SIZE
+    jl read_overflow_end
+
+read_overflow:
+    mov bx, 0x0
+read_overflow_end:
+    mov [read_ptr], bx
+
     jmp position_not_equal_end
 
 position_not_equal:
+    mov ah, 0x2
+    jmp position_not_equal_end
 empty_buffer:
 
     ; on error, ah == 0x0
-    mov ax, 0x0
+    mov ah, 0x3
 
 position_not_equal_end:
     ; restore all registers

@@ -137,6 +137,18 @@ remove_tail_end:
     mov [tail_x_pos], bx
     mov [tail_y_pos], cx
 
+    mov ax, bx
+    mov bx, cx
+    call check_curve
+
+    cmp ah, 0x1
+
+    jne remove_tail_return
+
+    mov ah, 0x0
+    mov [tail_direction], ax
+
+remove_tail_return:
     ret
 
 ; @params
