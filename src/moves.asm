@@ -1,46 +1,38 @@
     %include "includes/constants.asm"
 
 move:
+    ; checking if the snake is going right
     mov ax, [direction]
     cmp ax, DIRECTION_RIGHT
 
     jne not_direction_right
 
-    mov bx, 0x2
-    call load_position
-
-    call pos_to_video_pos
-
-    mov dx, SNAKE_BODY_CHAR
-    call place_element_at
+    call load_head_position_and_place_body_char
 
     ; move the head to right
     add bx, 0x2
 
+    ; move a snake head char at the new head position
     mov dx, SNAKE_HEAD_CHAR
     call place_element_at
 
     call video_pos_to_pos
 
+    ; save the new X position
     mov [head_x_pos], bx
 
     jmp move_end
 not_direction_right:
-    mov ax, [direction]
+    ; checking if the snake is going down
     cmp ax, DIRECTION_DOWN
 
     jne not_direction_down
 
-    mov bx, 0x2
-    call load_position
-
-    call pos_to_video_pos
-
-    mov dx, SNAKE_BODY_CHAR
-    call place_element_at
+    call load_head_position_and_place_body_char
 
     add cx, 0x2
 
+    ; move a snake head char at the new head position
     mov dx, SNAKE_HEAD_CHAR
     call place_element_at
 
@@ -50,21 +42,16 @@ not_direction_right:
 
     jmp move_end
 not_direction_down:
-    mov ax, [direction]
+    ; checking if the snake is going up
     cmp ax, DIRECTION_UP
 
     jne not_direction_up
 
-    mov bx, 0x2
-    call load_position
-    
-    call pos_to_video_pos
-
-    mov dx, SNAKE_BODY_CHAR
-    call place_element_at
+    call load_head_position_and_place_body_char
 
     sub cx, 0x2
 
+    ; move a snake head char at the new head position
     mov dx, SNAKE_HEAD_CHAR
     call place_element_at
 
@@ -96,24 +83,27 @@ move_end:
     ret
 
 remove_tail:
+    ; load tail position
     mov bx, 0x1
     call load_position
 
     call pos_to_video_pos
 
+    ; clear the tail
     mov dx, ' '
     call place_element_at
 
     mov ax, [tail_direction]
 
+    ; check if the tail is going right
     cmp ax, DIRECTION_RIGHT
-
     jne not_tail_dir_right
 
     add bx, 0x2
 
     jmp remove_tail_end
 not_tail_dir_right:
+    ; check if the tail is going left
     cmp ax, DIRECTION_LEFT
 
     jne not_tail_dir_left
@@ -122,6 +112,7 @@ not_tail_dir_right:
     
     jmp remove_tail_end
 not_tail_dir_left:
+    ; check if the tail is going down
     cmp ax, DIRECTION_DOWN
     
     jne not_tail_dir_down
@@ -137,175 +128,18 @@ remove_tail_end:
     mov [tail_x_pos], bx
     mov [tail_y_pos], cx
 
+    ; check if the current tail position is
+    ; where the head made a curve in the past
     mov ax, bx
     mov bx, cx
     call check_curve
 
     cmp ah, 0x1
-
     jne remove_tail_return
 
+    ; save the new direction
     mov ah, 0x0
     mov [tail_direction], ax
 
 remove_tail_return:
     ret
-
-; @params
-; bx - 0x1 for tail position, 0x2 for head position
-load_position:
-    cmp bx, 0x1
-
-    jne not_tail
-
-    mov bx, 0xB800
-    mov es, bx
-    mov bx, [tail_x_pos]
-    mov cx, [tail_y_pos]
-
-    jmp load_position_end
-not_tail:
-    mov bx, 0xB800
-    mov es, bx
-    mov bx, [head_x_pos]
-    mov cx, [head_y_pos]
-load_position_end:
-
-    ret
-
-; @params
-; bx - head X position
-; cx - head Y position
-; dx - element
-place_element_at:
-    push ax
-    push bx
-    push cx
-    push dx
-
-    mov ax, VIDEO_BUFFER_WIDTH
-    imul cx
-
-    add bx, ax
-    
-    pop dx
-
-    mov al, dl
-    mov ah, 0x02
-    mov [es:bx], ax
-
-    pop cx
-    pop bx
-    pop ax
-    ret
-
-on_left:
-    cmp BYTE [direction], DIRECTION_RIGHT
-    je on_left_return
-
-    mov cx, DIRECTION_LEFT
-    call _create_curve
-
-    mov BYTE [direction], DIRECTION_LEFT
-on_left_return:
-    ret
-
-on_up:
-    cmp BYTE [direction], DIRECTION_DOWN
-    je on_up_return
-
-    mov cx, DIRECTION_UP
-    call _create_curve
-
-    mov BYTE [direction], DIRECTION_UP
-on_up_return:
-    ret
-
-on_down:
-    cmp BYTE [direction], DIRECTION_UP
-    je on_down_return
-    
-    mov cx, DIRECTION_DOWN
-    call _create_curve
-
-    mov BYTE [direction], DIRECTION_DOWN
-on_down_return:
-    ret
-
-on_right:
-    cmp BYTE [direction], DIRECTION_LEFT
-    je on_right_return
-    
-    mov cx, DIRECTION_RIGHT
-    call _create_curve
-
-    mov BYTE [direction], DIRECTION_RIGHT
-on_right_return:
-    ret
-
-
-; @params
-; cx - direction
-_create_curve:
-    mov ax, [head_x_pos]
-    mov bx, [head_y_pos]
-    call create_curve
-
-    ret
-
-; @params
-; bx - X axis
-; cx - Y axis
-pos_to_video_pos:
-    push ax
-
-    mov ax, bx
-    mov bx, 0x2
-    imul bx
-
-    mov bx, ax
-
-    mov ax, cx
-    mov cx, 0x2
-    imul cx
-
-    mov cx, ax
-
-    pop ax
-
-    ret
-
-; @params
-; bx - X axis
-; cx - Y axis
-video_pos_to_pos:
-    push ax
-    push dx
-
-    xor dx, dx
-
-    mov ax, bx
-    mov bx, 0x2
-    idiv bx
-
-    mov bx, ax
-
-    xor dx, dx
-
-    mov ax, cx
-    mov cx, 0x2
-    idiv cx
-
-    mov cx, ax
-
-    pop dx
-    pop ax
-
-    ret
-
-    direction dw DIRECTION_RIGHT
-    head_x_pos dw HEAD_X_START_POS
-    head_y_pos dw HEAD_Y_START_POS
-    tail_x_pos dw TAIL_X_START_POS
-    tail_y_pos dw TAIL_Y_START_POS
-    tail_direction dw DIRECTION_RIGHT
