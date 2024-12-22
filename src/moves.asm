@@ -6,14 +6,21 @@ move:
 
     jne not_direction_right
 
-    call load_head_position
+    mov bx, 0x2
+    call load_position
 
-    call place_body
+    call pos_to_video_pos
+
+    mov dx, SNAKE_BODY_CHAR
+    call place_element_at
 
     ; move the head to right
     add bx, 0x2
 
-    call place_head
+    mov dx, SNAKE_HEAD_CHAR
+    call place_element_at
+
+    call video_pos_to_pos
 
     mov [head_x_pos], bx
 
@@ -24,16 +31,22 @@ not_direction_right:
 
     jne not_direction_down
 
-    call load_head_position
+    mov bx, 0x2
+    call load_position
 
-    call place_body
+    call pos_to_video_pos
 
-    ; move the head to down
-    add bx, VIDEO_BUFFER_WIDTH * 0x2
+    mov dx, SNAKE_BODY_CHAR
+    call place_element_at
 
-    call place_head
+    add cx, 0x2
 
-    mov [head_x_pos], bx
+    mov dx, SNAKE_HEAD_CHAR
+    call place_element_at
+
+    call video_pos_to_pos
+
+    mov [head_y_pos], cx
 
     jmp move_end
 not_direction_down:
@@ -42,59 +55,135 @@ not_direction_down:
 
     jne not_direction_up
 
-    call load_head_position
+    mov bx, 0x2
+    call load_position
+    
+    call pos_to_video_pos
 
-    call place_body
+    mov dx, SNAKE_BODY_CHAR
+    call place_element_at
 
-    ; move the head to up
-    sub bx, VIDEO_BUFFER_WIDTH * 0x2
+    sub cx, 0x2
 
-    call place_head
+    mov dx, SNAKE_HEAD_CHAR
+    call place_element_at
 
-    mov [head_x_pos], bx
+    call video_pos_to_pos
+
+    mov [head_y_pos], cx
 
     jmp move_end
 not_direction_up:
-    call load_head_position
+    mov bx, 0x2
+    call load_position
 
-    call place_body
+    call pos_to_video_pos
+
+    mov dx, SNAKE_BODY_CHAR
+    call place_element_at
 
     ; move the head to left
     sub bx, 0x2
 
-    call place_head
+    mov dx, SNAKE_HEAD_CHAR
+    call place_element_at
+
+    call video_pos_to_pos
     
     mov [head_x_pos], bx
-move_end:
-    
+move_end:    
+    call remove_tail
     ret
 
-load_head_position:
-    mov bx, 0xB800
-    mov es, bx
-    mov bx, [head_x_pos]
+remove_tail:
+    mov bx, 0x1
+    call load_position
 
-place_head:
-    push ax
+    call pos_to_video_pos
 
-    ; place the head
-    mov al, SNAKE_HEAD_CHAR
-    mov ah, 0x02
-    mov [es:bx], ax
+    mov dx, ' '
+    call place_element_at
 
-    pop ax
+    mov ax, [tail_direction]
+
+    cmp ax, DIRECTION_RIGHT
+
+    jne not_tail_dir_right
+
+    add bx, 0x2
+
+    jmp remove_tail_end
+not_tail_dir_right:
+    cmp ax, DIRECTION_LEFT
+
+    jne not_tail_dir_left
+
+    sub bx, 0x2
+    
+    jmp remove_tail_end
+not_tail_dir_left:
+    cmp ax, DIRECTION_DOWN
+    
+    jne not_tail_dir_down
+
+    add cx, 0x2
+    
+    jmp remove_tail_end
+not_tail_dir_down:
+    sub cx, 0x2
+remove_tail_end:
+    call video_pos_to_pos
+
+    mov [tail_x_pos], bx
+    mov [tail_y_pos], cx
+
     ret
 
 ; @params
-; bx - head position
-place_body:
-    push ax
+; bx - 0x1 for tail position, 0x2 for head position
+load_position:
+    cmp bx, 0x1
 
-    ; place a body char at the head's position
-    mov al, SNAKE_BODY_CHAR
-    mov ah, 0x2
+    jne not_tail
+
+    mov bx, 0xB800
+    mov es, bx
+    mov bx, [tail_x_pos]
+    mov cx, [tail_y_pos]
+
+    jmp load_position_end
+not_tail:
+    mov bx, 0xB800
+    mov es, bx
+    mov bx, [head_x_pos]
+    mov cx, [head_y_pos]
+load_position_end:
+
+    ret
+
+; @params
+; bx - head X position
+; cx - head Y position
+; dx - element
+place_element_at:
+    push ax
+    push bx
+    push cx
+    push dx
+
+    mov ax, VIDEO_BUFFER_WIDTH
+    imul cx
+
+    add bx, ax
+    
+    pop dx
+
+    mov al, dl
+    mov ah, 0x02
     mov [es:bx], ax
 
+    pop cx
+    pop bx
     pop ax
     ret
 
@@ -152,8 +241,59 @@ _create_curve:
 
     ret
 
+; @params
+; bx - X axis
+; cx - Y axis
+pos_to_video_pos:
+    push ax
+
+    mov ax, bx
+    mov bx, 0x2
+    imul bx
+
+    mov bx, ax
+
+    mov ax, cx
+    mov cx, 0x2
+    imul cx
+
+    mov cx, ax
+
+    pop ax
+
+    ret
+
+; @params
+; bx - X axis
+; cx - Y axis
+video_pos_to_pos:
+    push ax
+    push dx
+
+    xor dx, dx
+
+    mov ax, bx
+    mov bx, 0x2
+    idiv bx
+
+    mov bx, ax
+
+    xor dx, dx
+
+    mov ax, cx
+    mov cx, 0x2
+    idiv cx
+
+    mov cx, ax
+
+    pop dx
+    pop ax
+
+    ret
+
     direction dw DIRECTION_RIGHT
     head_x_pos dw HEAD_X_START_POS
-    head_y_pos dw 0x0
+    head_y_pos dw HEAD_Y_START_POS
     tail_x_pos dw TAIL_X_START_POS
-    tail_y_pos dw 0x0
+    tail_y_pos dw TAIL_Y_START_POS
+    tail_direction dw DIRECTION_RIGHT
