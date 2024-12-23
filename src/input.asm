@@ -3,6 +3,7 @@
 ; bx - on up handler
 ; cx - on right handler
 ; dx - on down handler
+; di - on reset
 ;
 ; @returns 
 ; ax - the selected handler, 0x0 if invalid or no user input
@@ -70,6 +71,14 @@ not_right:
     mov ax, dx
     jmp input_end
 not_down:
+    cmp al, 'Z'
+
+    jne not_reset
+
+    mov ax, di
+    jmp input_end
+not_reset:
+
     ; return 0x0 if invalid
     ; or no user input
     mov ax, 0x0

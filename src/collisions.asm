@@ -5,7 +5,7 @@ check_collision:
 
     jne not_body_collision
 
-    jmp $
+    mov WORD [game_over_flag], 0x1
     
     jmp check_collision_end
 not_body_collision:
