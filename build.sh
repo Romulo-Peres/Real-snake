@@ -1,5 +1,7 @@
+mkdir -p build
+mkdir -p image
+
 nasm src/loader.asm -o build/loader.o
 nasm src/snake.asm -o build/snake.o
 
-cp build/loader.o build/image
-dd if=build/snake.o >> build/image
+cat build/loader.o build/snake.o > image/image

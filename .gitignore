@@ -1,0 +1,6 @@
+tests/
+image/*
+!image/.gitkeep
+build/*
+!build/.gitkeep
+assets/projects
