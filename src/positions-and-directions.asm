@@ -88,6 +88,50 @@ load_head_position_and_place_body_char:
 
     ret
 
+check_game_borders:
+    mov ax, [head_x_pos]
+
+    cmp WORD [direction], DIRECTION_RIGHT
+    jne not_going_right
+
+    add ax, 0x1
+    jmp check_horizontal_borders
+not_going_right:
+    cmp WORD [direction], DIRECTION_LEFT
+    jne check_horizontal_borders
+    sub ax, 0x1
+check_horizontal_borders:
+    cmp ax, VIDEO_BUFFER_WIDTH 
+    jge border_game_over
+    cmp ax, 0x0
+    jl border_game_over
+
+    mov ax, [head_y_pos]
+
+    cmp WORD [direction], DIRECTION_UP
+    jne not_going_up
+
+    sub ax, 0x1
+    jmp check_vertical_borders
+not_going_up:
+    cmp WORD [direction], DIRECTION_DOWN
+    jne check_vertical_borders
+
+    add ax, 0x1
+check_vertical_borders:
+
+    cmp ax, VIDEO_BUFFER_HEIGHT
+    jge border_game_over
+    cmp ax, 0x0
+    jl border_game_over
+
+    mov ax, 0x0
+    jmp check_game_borders_end
+border_game_over:
+    mov ax, 0x1
+check_game_borders_end:
+    ret
+
     direction dw DIRECTION_RIGHT
     head_x_pos dw HEAD_X_START_POS
     head_y_pos dw HEAD_Y_START_POS

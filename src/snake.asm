@@ -53,6 +53,11 @@ game_over:
 
     call ax ; reset the processor
 move_snake:
+    call check_game_borders
+    mov WORD [game_over_flag], ax
+
+    cmp ax, 0x1
+    je next_loop
     call move
 next_loop:
     call sleep
