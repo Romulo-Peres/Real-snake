@@ -86,11 +86,24 @@ move_end:
     pop ax
     call check_collision
 
+    ; verify if the snake ate a fruit  
     cmp ah, 0x1
+    jne remove_snake_tail
 
-    je move_return
+    ; add the growth factor
+    add WORD [pending_body], FRUIT_GROWTH_FACTOR
+    dec WORD [pending_body]
+
+    jmp move_return
+remove_snake_tail:
+    ; confirm whether the growth factor is no longer present
+    cmp WORD [pending_body], 0x0
+    jne decrement_pending_body
 
     call remove_tail
+    jmp move_return
+decrement_pending_body:
+    dec WORD [pending_body]
 move_return:
     ret
 
@@ -155,3 +168,5 @@ remove_tail_end:
 
 remove_tail_return:
     ret
+
+    pending_body dw 0x0
