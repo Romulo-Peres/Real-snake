@@ -9,6 +9,12 @@
     mov al, 0x3
     int 0x10
 
+    ; set cursor type
+    mov ah, 0x1
+    mov cl, 0x0
+    mov ch, 32
+    int 0x10
+
     mov bx, GAME_SEGMENT
     mov es, bx
     mov bx, 0
@@ -30,7 +36,7 @@
 
     mov bx, GAME_SEGMENT
     mov ds, bx
-    
+
     ; make the processor execute the game
     jmp GAME_SEGMENT:0x0
 

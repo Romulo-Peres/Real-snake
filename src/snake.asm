@@ -18,7 +18,7 @@ snake_begin:
     mov bx, 0xB800
     mov es, bx
     mov bx, 0x0
-    
+
     call setup_snake
 
     mov bx, 80
@@ -35,7 +35,7 @@ game_loop:
 
     ; check if it is game over
     cmp WORD [game_over_flag], 0x1
-    je game_over
+    jge game_over
 
     ; verify if there is some user input
     cmp ax, 0x0
@@ -46,6 +46,16 @@ game_loop:
 
     jmp move_snake
 game_over:
+    cmp WORD [game_over_flag], 0x2
+    je check_input_for_reset
+
+    mov ax, VIDEO_BUFFER_WIDTH
+    mov bx, VIDEO_BUFFER_HEIGHT
+    call game_over_message
+
+    mov WORD [game_over_flag], 0x2
+
+check_input_for_reset:
     ; only execute user input handler
     ; if the input is to reset the processor
     cmp ax, di
@@ -72,3 +82,40 @@ on_reset:
 
 
     game_over_flag dw 0x0
+
+game_over_message:
+    mov bx, 0xB800
+    mov es, bx
+
+    ; begin of screen center calculation
+    mov ax, VIDEO_BUFFER_HEIGHT
+    mov cx, VIDEO_BUFFER_WIDTH * 2
+    imul cx
+
+    xor dx, dx
+    mov cx, 0x2
+    idiv cx
+    ; end of screen center calculation
+
+    mov bx, ax
+    sub bx, 0xA
+
+    mov si, game_over_msg
+game_over_message_loop:
+    mov al, [si]
+    cmp al, 0x0
+    je game_over_message_loop_end
+
+    mov ah, 0x0F
+    mov [es:bx], ax
+
+    inc si
+    add bx, 0x2
+
+    call sleep
+    jmp game_over_message_loop
+
+game_over_message_loop_end:
+    ret
+
+    game_over_msg db "Game over!", 0x0
