@@ -62,7 +62,7 @@ sudo dd if=./image of=/dev/sd[X] bs=512 count=4
 ```
 where `[X]` is the letter assigned to your device. Check it by running the `lsblk` or `fdisk -l` commands.
 
-### On Window
+### On Windows
 On Windows, choose a capable program to write the game image to your pendrive, like [Rufus](https://rufus.ie/en/) or any other tool available to the system.
 
 ## Configuring the BIOS
