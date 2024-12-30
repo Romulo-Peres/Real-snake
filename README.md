@@ -22,7 +22,7 @@ The real mode is the most raw mode that the processor can operate, for that reas
 </ul>
 
 ## Register size
-Differently of assembly code running on user land, registers on real mode are only 16 bits wide, so the smart use of data structures and binary representations are vital to the successful implementation of this game.
+Differently of assembly code running on userland, registers on real mode are only 16 bits wide, so the smart use of data structures and binary representations are vital to the successful implementation of this game.
 
 # Game image structure on pendrive
 <img width="100%" src="./assets/image-structure.png"/>
@@ -33,7 +33,7 @@ only grants you 1MiB of addressable memory, such amount that is almost nothing o
 
 For that and other reasons, the real snake doesn't implement an array that contains a snake's body part on every index, instead, it uses a data structure called `ring buffer`.
 
-The ring buffer itself is a FIFO like data structure, where the end of it is also the beginning. It is used to track down all the player's movements, so on every UP, DOWN, RIGHT or LEFT command, a value encoded in binary containing the location and the new direction is written inside this structure, making it possible to the snake's tail to effectivelly follow the snake's body, decreasing the necessary amount of memory, replacing the 2 bytes for every body part model to a occasional 2 bytes on every direction change model.
+The ring buffer itself is a FIFO-like data structure, where the end of it is also the beginning. It is used to track down all the player's movements, so on every UP, DOWN, RIGHT or LEFT command, a value encoded in binary containing the location and the new direction is written inside this structure, making it possible to the snake's tail to effectivelly follow the snake's body, decreasing the necessary amount of memory, replacing the 2 bytes for every body part model to a occasional 2 bytes on every direction change model.
 
 # Running it on a real hardware
 To make the real snake run on a real hardware, you will need to flash the game image in your pendrive! To do that, you can either create the image from the source code or use the ready-to-go image available inside the `image` directory.
