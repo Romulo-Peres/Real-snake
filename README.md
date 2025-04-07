@@ -7,7 +7,7 @@ As a matter of curiosity, the `real` of real snake refers to the mode that the p
 Regardless the fact that the entire project was written in assembly, a few challenges had to be solved to make the real snake work!
 
 ## Limited boot memory
-The game image itself is pretty small, but the amount of memory that the BIOS loads from my program to memory is even smaller. From my pendrive (device used to run the game on a real hardware), the BIOS will load around by 440 bytes of executable code, however, the game itself is greater than 512 bytes of instructions, making it impossible to the BIOS to load everything automatically.
+The game image itself is pretty small, but the amount of memory that the BIOS loads from my program to memory is even smaller. From my pendrive (device used to run the game on a real hardware), the BIOS will load around by 440 bytes of executable code, however, the game itself is greater than 512 bytes of instructions, making it impossible for the BIOS to load everything automatically.
 
 The solution to this problem was to implement a loader, a program small enough to be loaded by the BIOS, but complete enough to actually load the game from pendrive and make the processor execute it.
 
@@ -33,10 +33,10 @@ only grants you 1MiB of addressable memory, such amount that is almost nothing o
 
 For that and other reasons, the real snake doesn't implement an array that contains a snake's body part on every index, instead, it uses a data structure called `ring buffer`.
 
-The ring buffer itself is a FIFO-like data structure, where the end of it is also the beginning. It is used to track down all the player's movements, so on every UP, DOWN, RIGHT or LEFT command, a value encoded in binary containing the location and the new direction is written inside this structure, making it possible to the snake's tail to effectivelly follow the snake's body, decreasing the necessary amount of memory, replacing the 2 bytes for every body part model to a occasional 2 bytes on every direction change model.
+The ring buffer itself is a FIFO-like data structure, where the end of it is also the beginning. It is used to track down all the player's movements, so on every UP, DOWN, RIGHT or LEFT command, a value encoded in binary containing the location and the new direction is written inside this structure, making it possible to the snake's tail to effectivelly follow the snake's body, decreasing the necessary amount of memory, replacing the 2 bytes for every body part model to an occasional 2 bytes on every direction change model.
 
 # Running it on a real hardware
-To make the real snake run on a real hardware, you will need to flash the game image in your pendrive! To do that, you can either create the image from the source code or use the ready-to-go image available inside the `image` directory.
+To run the real snake on actual hardware, you will need to flash the game image onto your pendrive! To do that, you can either create the image from the source code or use the ready-to-go image available inside the `image` directory.
 
 ## Creating the image from source code
 To build the source code, you will need to have the Nasm assembler installed on your computer. Once the assembler is available system-wide, this shell command should do everything:
@@ -53,7 +53,7 @@ The BIOS expects the binary instructions to be written in the first sectors of o
 ### Pontentially destructive action
 `Flashing the game image in the first sectors of the pendrive would overwrite the partition table, making the device unusable for normal file management operations. You can make it usable again by formatting the device, but all your files will be lost.`
 
-`Make sure to make a backup before installing the game on your device.`
+`Make sure to create a backup before installing the game on your device.`
 
 ### On Linux
 Assumming you are inside the `image` directory, this shell command should do the trick:
