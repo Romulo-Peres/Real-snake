@@ -1,5 +1,7 @@
     %include "includes/constants.asm"
 
+; @returns
+; ax - 0x1 if the snake ate a fruit, 0 otherwise
 move:
     ; checking if the snake is going right
     mov ax, [direction]
@@ -94,6 +96,8 @@ move_end:
     add WORD [pending_body], FRUIT_GROWTH_FACTOR
     dec WORD [pending_body]
 
+    mov ax, 0x1
+
     jmp move_return
 remove_snake_tail:
     ; confirm whether the growth factor is no longer present
@@ -101,6 +105,9 @@ remove_snake_tail:
     jne decrement_pending_body
 
     call remove_tail
+
+    mov ax, 0x0
+
     jmp move_return
 decrement_pending_body:
     dec WORD [pending_body]

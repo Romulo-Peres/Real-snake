@@ -13,6 +13,8 @@
     %include "src/curve-ring-buffer.asm"
     %include "src/moves.asm"
     %include "src/setup.asm"
+    %include "src/game-over-panel.asm"
+    %include "src/text.asm"
 
 snake_begin:
     mov bx, 0xB800
@@ -51,7 +53,9 @@ game_over:
 
     mov ax, VIDEO_BUFFER_WIDTH
     mov bx, VIDEO_BUFFER_HEIGHT
-    call game_over_message
+
+    mov di, [points]
+    call draw_game_over_message
 
     mov WORD [game_over_flag], 0x2
 
@@ -69,6 +73,10 @@ move_snake:
     cmp ax, 0x1
     je next_loop
     call move
+
+    cmp ax, 0x1
+    jne next_loop
+    inc WORD [points]
 next_loop:
     call sleep
     jmp game_loop
@@ -82,40 +90,4 @@ on_reset:
 
 
     game_over_flag dw 0x0
-
-game_over_message:
-    mov bx, 0xB800
-    mov es, bx
-
-    ; begin of screen center calculation
-    mov ax, VIDEO_BUFFER_HEIGHT
-    mov cx, VIDEO_BUFFER_WIDTH * 2
-    imul cx
-
-    xor dx, dx
-    mov cx, 0x2
-    idiv cx
-    ; end of screen center calculation
-
-    mov bx, ax
-    sub bx, 0xA
-
-    mov si, game_over_msg
-game_over_message_loop:
-    mov al, [si]
-    cmp al, 0x0
-    je game_over_message_loop_end
-
-    mov ah, 0x0F
-    mov [es:bx], ax
-
-    inc si
-    add bx, 0x2
-
-    call sleep
-    jmp game_over_message_loop
-
-game_over_message_loop_end:
-    ret
-
-    game_over_msg db "Game over!", 0x0
+    points dw 0x0
