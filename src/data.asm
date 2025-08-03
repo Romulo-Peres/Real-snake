@@ -1,10 +1,11 @@
 ; ===== Labels =====
 game_over_msg db "Game over", 0x0
 game_over_msg_len equ $-game_over_msg
-score_label db "Final Score:", 0x0
+score_label db "Final Score: ", 0x0
 score_label.len equ $-score_label
 options_label db "[T] - try again, [Z] - exit game", 0x0
 options_label.len equ $-options_label
+complete_score_label times 5 dd 0x0
 
 ; ===== Box Structure =====
 panel_horizontal_bar db "------------------------------------", 0x0
@@ -32,3 +33,9 @@ last_fruit_offset dw 0x0
 user_points db '0', 0x0
 game_over_flag dw 0x0
 points dw 0x0
+
+
+; ===== Data Convertion Specifics =====
+converted_value db 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0
+itoa_buffer dd 0x0
+itoa_content_length dw 0x0

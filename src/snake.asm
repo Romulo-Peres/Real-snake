@@ -17,6 +17,8 @@ jmp snake_begin
 %include "src/text.asm"
 %include "src/environment-setup.asm"
 %include "src/data.asm"
+%include "src/utilities/itoa.asm"
+%include "src/utilities/strcat.asm"
 
 snake_begin:
     mov bx, 0xB800
@@ -106,9 +108,20 @@ on_try_again:
 
     configure_stack_segment
     call configure_data_segment
-
     call clear_video_buffer
 
-    jmp GAME_SEGMENT:0x0
+    mov di, complete_score_label
+
+    .clear_score_label_loop:
+        cmp BYTE [di], 0x0
+        je .restart_game
+
+        mov BYTE [di], 0x0
+        inc di
+
+        jmp .clear_score_label_loop
+
+    .restart_game:
+        jmp GAME_SEGMENT:0x0
 
 

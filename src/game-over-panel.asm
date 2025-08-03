@@ -14,18 +14,34 @@ draw_game_over_message:
     mov dx, VIDEO_BUFFER_HEIGHT / 2 - 2
     call write_horizontal_text_at
 
-    mov di, score_label
-    mov si, VIDEO_BUFFER_WIDTH / 2 - score_label.len / 2
-    mov dx, VIDEO_BUFFER_HEIGHT / 2
-    call write_horizontal_text_at
+    mov di, complete_score_label
+    mov si, score_label
+    call strcat
 
-    mov dl, [bp-1]
-    add dl, '0'
+    ; save the length of score_label
+    push ax
 
-    mov [user_points], dl
+    mov di, [bp-1]
+    call itoa
 
-    mov di, user_points
-    mov si, VIDEO_BUFFER_WIDTH / 2 - score_label.len / 2 + score_label.len
+    mov di, complete_score_label
+    mov si, converted_value
+    call strcat
+
+    pop dx      ; restore the length of score_label 
+    add ax, dx  ; add with the converted_value length
+    
+    ; divide the length of complete_score_label by 2
+    xor dx, dx
+    mov bx, 2
+    div bx
+
+    ; (VIDEO_BUFFER_WIDTH / 2) - (complete_score_label / 2)
+    neg ax
+    add ax, VIDEO_BUFFER_WIDTH / 2
+
+    mov di, complete_score_label
+    mov si, ax
     mov dx, VIDEO_BUFFER_HEIGHT / 2
     call write_horizontal_text_at
 
