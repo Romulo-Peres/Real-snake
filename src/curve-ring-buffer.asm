@@ -1,7 +1,7 @@
-    %include "includes/constants.asm"
-    %define DIRECTION 1
-    %define X_AXIS_POINT 2
-    %define Y_AXIS_POINT 3
+%include "includes/constants.asm"
+%define DIRECTION 1
+%define X_AXIS_POINT 2
+%define Y_AXIS_POINT 3
 
 ; @params
 ; ax - X axis point
@@ -141,9 +141,6 @@ check_curve:
         pop bp
 
     ret
-
-    read_ptr dw 0x0
-    write_ptr dw 0x0
 
 
 clear_ring_buffer:

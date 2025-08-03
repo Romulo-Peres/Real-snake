@@ -152,9 +152,3 @@ reset_positions_and_direction:
 
     ret
 
-    direction dw DIRECTION_RIGHT
-    head_x_pos dw HEAD_X_START_POS
-    head_y_pos dw HEAD_Y_START_POS
-    tail_x_pos dw TAIL_X_START_POS
-    tail_y_pos dw TAIL_Y_START_POS
-    tail_direction dw DIRECTION_RIGHT

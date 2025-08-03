@@ -1,11 +1,11 @@
-    org 0x7C00
+org 0x7C00
 
-    jmp loader_begin
+[BITS 16]
 
-    %include "includes/constants.asm"
-    %include "src/environment-setup.asm"
+jmp loader_begin
 
-    BITS 16
+%include "includes/constants.asm"
+%include "src/environment-setup.asm"
 
 loader_begin:
 

@@ -1,4 +1,4 @@
-    %include "includes/constants.asm"
+%include "includes/constants.asm"
 
 ; @params
 ; bx - video buffer width
@@ -86,5 +86,4 @@ generate_fruit:
     
     ret
 
-    last_fruit_offset dw 0x0
 

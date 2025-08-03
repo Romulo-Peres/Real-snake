@@ -1,4 +1,4 @@
-    %include "includes/constants.asm"
+%include "includes/constants.asm"
 
 ; @returns
 ; ax - 0x1 if the snake ate a fruit, 0 otherwise
@@ -179,4 +179,3 @@ remove_tail:
     .return:
         ret
 
-    pending_body dw 0x0

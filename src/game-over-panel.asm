@@ -10,7 +10,7 @@ draw_game_over_message:
     call draw_game_over_panel
 
     mov di, game_over_msg
-    mov si, VIDEO_BUFFER_WIDTH / 2 - game_over_msg.len / 2
+    mov si, VIDEO_BUFFER_WIDTH / 2 - game_over_msg_len / 2
     mov dx, VIDEO_BUFFER_HEIGHT / 2 - 2
     call write_horizontal_text_at
 
@@ -79,17 +79,3 @@ draw_game_over_panel:
     call write_horizontal_text_at
 
     ret
-
-game_over_msg db "Game over", 0x0
-game_over_msg.len equ $-game_over_msg
-score_label db "Final Score:", 0x0
-score_label.len equ $-score_label
-options_label db "[T] - try again, [Z] - exit game", 0x0
-options_label.len equ $-options_label
-panel_horizontal_bar db "------------------------------------", 0x0
-panel_horizontal_bar.len equ $-panel_horizontal_bar
-empty_text_string times panel_horizontal_bar.len db ' '
-db 0x0
-panel_vertical_bar db "|||||||", 0x0
-panel_vertical_bar.len equ $- panel_vertical_bar
-user_points db '0', 0x0

@@ -1,21 +1,22 @@
-    org 0x0
+org 0x0
 
-    jmp snake_begin
+jmp snake_begin
 
-    %include "includes/constants.asm"
-    %include "src/positions-and-directions.asm"
-    %include "src/video-helpers.asm"
-    %include "src/place-element-at.asm"
-    %include "src/collisions.asm"
-    %include "src/sleep.asm"
-    %include "src/input.asm"
-    %include "src/generate_fruit.asm"
-    %include "src/curve-ring-buffer.asm"
-    %include "src/moves.asm"
-    %include "src/snake-setup.asm"
-    %include "src/game-over-panel.asm"
-    %include "src/text.asm"
-    %include "src/environment-setup.asm"
+%include "includes/constants.asm"
+%include "src/positions-and-directions.asm"
+%include "src/video-helpers.asm"
+%include "src/place-element-at.asm"
+%include "src/collisions.asm"
+%include "src/sleep.asm"
+%include "src/input.asm"
+%include "src/generate_fruit.asm"
+%include "src/curve-ring-buffer.asm"
+%include "src/moves.asm"
+%include "src/snake-setup.asm"
+%include "src/game-over-panel.asm"
+%include "src/text.asm"
+%include "src/environment-setup.asm"
+%include "src/data.asm"
 
 snake_begin:
     mov bx, 0xB800
@@ -111,5 +112,3 @@ on_try_again:
     jmp GAME_SEGMENT:0x0
 
 
-    game_over_flag dw 0x0
-    points dw 0x0
