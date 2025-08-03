@@ -58,7 +58,7 @@ The BIOS expects the binary instructions to be written in the first sectors of o
 ### On Linux
 Assumming you are inside the `image` directory, this shell command should do the trick:
 ```sh
-sudo dd if=./image of=/dev/sd[X] bs=512 count=4
+sudo dd if=./image of=/dev/sd[X] bs=512 count=5
 ```
 where `[X]` is the letter assigned to your device. Check it by running the `lsblk` or `fdisk -l` commands.
 
@@ -71,4 +71,10 @@ After plugging the pendrive with the game image on you computer, reboot and ente
 After saving the changes and rebooting the computer, the BIOS will load the game from the pendrive and make the processor execute it.
 
 # In-game controls
-Once running the game, you can control the snake direction using the W, A, S, D keys. If your snake hit and die or you just want to go back to your system, press the `Z` key, it will instruct the processor to reset and start the boot process again; at this point you can unplug the pendrive from your computer, this will make the BIOS choose the next option in the boot priority, propably being the bootloader of your operating system.
+Once running the game, you can control the snake direction using the W, A, S, D keys. You can make the snake move faster by toggling its boost with the `F` key. When activated, the boost doubles the snake's speed and remains active indefinitely until you press `F` again to disable it.
+
+## Leaving the game
+You can press the `Z` key if you want to go back to your system, it will instruct the processor to reset and start the boot process again; at this point you can unplug the pendrive from your computer, this will make the BIOS choose the next option in the boot priority, propably being the bootloader of your operating system.
+
+## Restarting the game
+If you die or simply want to restart the game for any reason, press the `T` key. This will completely reset the game state and start everything over, eliminating the need to restart your computer.
