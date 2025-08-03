@@ -5,65 +5,70 @@
 ; bx - the X axis position
 ; cx - the Y axis position
 load_position:
-    cmp bx, 0x1
-
-    jne not_tail
+    cmp bx, 0x1 ; check if it is to load the head position
+    jne .head_position_else_block
 
     ; loading tail positions
     mov bx, [tail_x_pos]
     mov cx, [tail_y_pos]
 
-    jmp load_position_end
-not_tail:
-    ; loading head positions
-    mov bx, [head_x_pos]
-    mov cx, [head_y_pos]
-load_position_end:
-    ret
+    jmp .end
+    
+    .head_position_else_block:
+        ; loading head positions
+        mov bx, [head_x_pos]
+        mov cx, [head_y_pos]
+
+    .end:
+        ret
 
 on_left:
     cmp BYTE [direction], DIRECTION_RIGHT
-    je on_left_return
+    je .end
 
     mov cx, DIRECTION_LEFT
     call _create_curve
 
     mov BYTE [direction], DIRECTION_LEFT
-on_left_return:
-    ret
+
+    .end:
+        ret
 
 on_up:
     cmp BYTE [direction], DIRECTION_DOWN
-    je on_up_return
+    je .end
 
     mov cx, DIRECTION_UP
     call _create_curve
 
     mov BYTE [direction], DIRECTION_UP
-on_up_return:
-    ret
+    
+    .end:
+        ret
 
 on_down:
     cmp BYTE [direction], DIRECTION_UP
-    je on_down_return
+    je .end
     
     mov cx, DIRECTION_DOWN
     call _create_curve
 
     mov BYTE [direction], DIRECTION_DOWN
-on_down_return:
-    ret
+    
+    .end:
+        ret
 
 on_right:
     cmp BYTE [direction], DIRECTION_LEFT
-    je on_right_return
+    je .end
     
     mov cx, DIRECTION_RIGHT
     call _create_curve
 
     mov BYTE [direction], DIRECTION_RIGHT
-on_right_return:
-    ret
+
+    .end:
+        ret
 
 
 ; @params
@@ -91,46 +96,51 @@ load_head_position_and_place_body_char:
 check_game_borders:
     mov ax, [head_x_pos]
 
-    cmp WORD [direction], DIRECTION_RIGHT
-    jne not_going_right
+    cmp WORD [direction], DIRECTION_RIGHT ; check if the snake is going to the right
+    jne .right_direction_else_block
 
     add ax, 0x1
-    jmp check_horizontal_borders
-not_going_right:
-    cmp WORD [direction], DIRECTION_LEFT
-    jne check_horizontal_borders
-    sub ax, 0x1
-check_horizontal_borders:
-    cmp ax, VIDEO_BUFFER_WIDTH 
-    jge border_game_over
-    cmp ax, 0x0
-    jl border_game_over
+    jmp .check_horizontal_borders
 
-    mov ax, [head_y_pos]
+    .right_direction_else_block:
+        cmp WORD [direction], DIRECTION_LEFT ; check if the snake is going to the left
+        jne .check_horizontal_borders
+        sub ax, 0x1
 
-    cmp WORD [direction], DIRECTION_UP
-    jne not_going_up
+    .check_horizontal_borders:
+        cmp ax, VIDEO_BUFFER_WIDTH 
+        jge .border_game_over
+        cmp ax, 0x0
+        jl .border_game_over
 
-    sub ax, 0x1
-    jmp check_vertical_borders
-not_going_up:
-    cmp WORD [direction], DIRECTION_DOWN
-    jne check_vertical_borders
+        mov ax, [head_y_pos]
 
-    add ax, 0x1
-check_vertical_borders:
+        cmp WORD [direction], DIRECTION_UP ; check if the snake is going up
+        jne .up_direction_else_block
 
-    cmp ax, VIDEO_BUFFER_HEIGHT
-    jge border_game_over
-    cmp ax, 0x0
-    jl border_game_over
+        sub ax, 0x1
+        jmp .check_vertical_borders
+    
+    .up_direction_else_block:
+        cmp WORD [direction], DIRECTION_DOWN ; check if the snake is going down
+        jne .check_vertical_borders
 
-    mov ax, 0x0
-    jmp check_game_borders_end
-border_game_over:
-    mov ax, 0x1
-check_game_borders_end:
-    ret
+        add ax, 0x1
+    
+    .check_vertical_borders:
+        cmp ax, VIDEO_BUFFER_HEIGHT
+        jge .border_game_over
+        cmp ax, 0x0
+        jl .border_game_over
+
+        mov ax, 0x0
+        jmp .end
+
+    .border_game_over:
+        mov ax, 0x1
+    
+    .end:
+        ret
 
 reset_positions_and_direction:
     mov WORD [direction], DIRECTION_RIGHT

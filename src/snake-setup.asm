@@ -14,12 +14,12 @@ setup_snake:
 
     mov dx, 0
 
-setup_loop:
-    mov [es:bx], ax
-    add bx, 0x2
-    inc dx
+    .setup_loop:
+        mov [es:bx], ax
+        add bx, 0x2
+        inc dx
     
-    cmp dx, 0x5
-    jl setup_loop
+        cmp dx, 0x5
+        jl .setup_loop
 
     ret

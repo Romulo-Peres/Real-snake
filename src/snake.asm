@@ -29,66 +29,69 @@ snake_begin:
     mov bx, 80
     mov cx, 25
     call generate_fruit
-game_loop:
 
-    mov ax, on_left
-    mov bx, on_up
-    mov cx, on_right
-    mov dx, on_down
-    mov di, on_reset
-    mov si, on_try_again
-    call keyboard_input
+    .game_loop:
+        mov ax, on_left
+        mov bx, on_up
+        mov cx, on_right
+        mov dx, on_down
+        mov di, on_reset
+        mov si, on_try_again
+        call keyboard_input
 
-    ; check if it is game over
-    cmp WORD [game_over_flag], 0x1
-    jge game_over
+        ; check if it is game over
+        cmp WORD [game_over_flag], 0x1
+        jge .game_over
 
-    ; verify if there is some user input
-    cmp ax, 0x0
-    je move_snake
+        ; verify if there is some user input
+        cmp ax, 0x0
+        je .move_snake
 
-    ; call the user input handler
-    call ax
+        ; call the user input handler
+        call ax
 
-    jmp move_snake
-game_over:
-    cmp WORD [game_over_flag], 0x2
-    je check_for_game_over_input
+        jmp .move_snake
 
-    mov ax, VIDEO_BUFFER_WIDTH
-    mov bx, VIDEO_BUFFER_HEIGHT
+    .game_over:
+        cmp WORD [game_over_flag], 0x2
+        je .check_for_game_over_input
 
-    mov di, [points]
-    call draw_game_over_message
+        mov ax, VIDEO_BUFFER_WIDTH
+        mov bx, VIDEO_BUFFER_HEIGHT
 
-    mov WORD [game_over_flag], 0x2
+        mov di, [points]
+        call draw_game_over_message
 
-check_for_game_over_input:
-    cmp ax, on_try_again
-    jne .else_block
+        mov WORD [game_over_flag], 0x2
 
-    jmp .execute_handler
+    .check_for_game_over_input:
+        cmp ax, on_try_again
+        jne .else_block
+
+        jmp .execute_handler
 
     .else_block:
         cmp ax, on_reset
-        jne next_loop
+        jne .next_loop
 
     .execute_handler:
         call ax
-move_snake:
-    call check_game_borders
-    mov WORD [game_over_flag], ax
 
-    cmp ax, 0x1
-    je next_loop
-    call move
+    .move_snake:
+        call check_game_borders
+        mov WORD [game_over_flag], ax
 
-    cmp ax, 0x1
-    jne next_loop
-    inc WORD [points]
-next_loop:
-    call sleep
-    jmp game_loop
+        cmp ax, 0x1
+        je .next_loop
+        call move
+
+        cmp ax, 0x1
+        jne .next_loop
+        inc WORD [points]
+
+    .next_loop:
+        call sleep
+        jmp .game_loop
 
 on_reset:
     cli

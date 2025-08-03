@@ -35,19 +35,20 @@ create_curve:
 
     cmp bx, MAX_RING_BUFFER_SIZE
 
-    jl overflow_end
+    jl .overflow_end
 
-overflow:
+    ; overflow
     mov bx, 0x0
-overflow_end:
-    mov [write_ptr], bx
 
-    pop es
-    pop dx
-    pop cx
-    pop bx
-    pop ax
-    pop bp
+    .overflow_end:
+        mov [write_ptr], bx
+
+        pop es
+        pop dx
+        pop cx
+        pop bx
+        pop ax
+        pop bp
 
     ret
 
@@ -74,7 +75,7 @@ check_curve:
     ; check if both pointers are equal
     mov bx, [read_ptr]
     cmp bx, [write_ptr]
-    je empty_buffer
+    je .empty_buffer
 
     ; load address to read the next buffer value
     mov bx, RING_BUFFER_BASE
@@ -103,7 +104,7 @@ check_curve:
     ; verify if the buffer ring value and
     ; the given values match
     cmp ax, dx
-    jne position_not_equal
+    jne .position_not_equal
 
     ; on success, ah == 0x1 and al is the direction
     mov ah, 0x1
@@ -114,30 +115,30 @@ check_curve:
     add bx, 0x2
 
     cmp bx, MAX_RING_BUFFER_SIZE
-    jl read_overflow_end
+    jl .read_overflow_end
 
-read_overflow:
+    ; read overflow
     mov bx, 0x0
-read_overflow_end:
-    mov [read_ptr], bx
 
-    jmp position_not_equal_end
+    .read_overflow_end:
+        mov [read_ptr], bx
+        jmp .position_not_equal_end
 
-position_not_equal:
-    mov ah, 0x2
-    jmp position_not_equal_end
-empty_buffer:
+    .position_not_equal:
+        mov ah, 0x2
+        jmp .position_not_equal_end
 
-    ; on error, ah == 0x0
-    mov ah, 0x3
+    .empty_buffer:
+        ; on error, ah == 0x0
+        mov ah, 0x3
 
-position_not_equal_end:
-    ; restore all registers
-    mov sp, bp
-    pop es
-    pop dx
-    pop bx
-    pop bp
+    .position_not_equal_end:
+        ; restore all registers
+        mov sp, bp
+        pop es
+        pop dx
+        pop bx
+        pop bp
 
     ret
 

@@ -55,33 +55,34 @@ generate_fruit:
     mov es, bx
     mov bx, ax
 
-availability_loop:
-    mov ax, [es:bx]
+    .availability_loop:
+        mov ax, [es:bx]
     
-    cmp al, SNAKE_BODY_CHAR
-    je not_available
-    cmp al, SNAKE_HEAD_CHAR
-    je not_available
+        cmp al, SNAKE_BODY_CHAR
+        je .position_not_available
+        cmp al, SNAKE_HEAD_CHAR
+        je .position_not_available
     
-    ; craft the fruit char
-    mov al, FRUIT_CHAR
-    mov ah, 0x04
+        ; craft the fruit char
+        mov al, FRUIT_CHAR
+        mov ah, 0x04
 
-    mov [es:bx], ax
+        mov [es:bx], ax
 
-    jmp availability_loop_end
-not_available:
-    add bx, 0x2
-    add WORD [last_fruit_offset], 0x1
-    jmp availability_loop
-availability_loop_end:
+        jmp .loop_end
+    
+    .position_not_available:
+        add bx, 0x2
+        add WORD [last_fruit_offset], 0x1
+        jmp .availability_loop
 
-    pop es
-    pop dx
-    pop ax
-    pop cx
-    pop bx
-    pop bp
+    .loop_end:
+        pop es
+        pop dx
+        pop ax
+        pop cx
+        pop bx
+        pop bp
     
     ret
 

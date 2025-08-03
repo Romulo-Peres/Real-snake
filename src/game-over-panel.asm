@@ -42,15 +42,15 @@ draw_game_over_message:
 _clear_game_over_panel_location:
     mov dx, 9
     
-clear_game_over_panel_location_loop:
-    mov si, VIDEO_BUFFER_WIDTH / 2 - panel_horizontal_bar.len / 2
-    mov di, empty_text_string
-    call write_horizontal_text_at
+    .loop:
+        mov si, VIDEO_BUFFER_WIDTH / 2 - panel_horizontal_bar.len / 2
+        mov di, empty_text_string
+        call write_horizontal_text_at
 
-    inc dx
+        inc dx
 
-    cmp dx, 15
-    jle clear_game_over_panel_location_loop
+        cmp dx, 15
+        jle .loop
 
     ret
 

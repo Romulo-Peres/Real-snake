@@ -13,23 +13,24 @@ write_horizontal_text_at:
     call _calculate_absolute_x_and_y
     mov bx, ax
 
-write_horizontal_text_loop:
-    mov al, [di]
-    mov ah, 0x0F
+    .writing_loop:
+        mov al, [di]
+        mov ah, 0x0F
 
-    mov [es:bx], ax
+        mov [es:bx], ax
 
-    add bx, 2
+        add bx, 2
 
-    inc di
+        inc di
 
-    cmp BYTE [di], 0x0
+        cmp BYTE [di], 0x0
 
-    jne write_horizontal_text_loop
+        jne .writing_loop
 
-    pop dx
-    pop si
-    pop di
+    .end:
+        pop dx
+        pop si
+        pop di
 
     ret
 
@@ -48,23 +49,24 @@ write_vertical_text_at:
     call _calculate_absolute_x_and_y
     mov bx, ax
 
-write_vertical_text_loop:
-    mov al, [di]
-    mov ah, 0x0F
+    .writing_loop:
+        mov al, [di]
+        mov ah, 0x0F
 
-    mov [es:bx], ax
+        mov [es:bx], ax
 
-    add bx, VIDEO_BUFFER_WIDTH * 2
+        add bx, VIDEO_BUFFER_WIDTH * 2
 
-    inc di
+        inc di
 
-    cmp BYTE [di], 0x0
+        cmp BYTE [di], 0x0
 
-    jne write_vertical_text_loop
+        jne .writing_loop
 
-    pop dx
-    pop si
-    pop di
+    .end:
+        pop dx
+        pop si
+        pop di
 
     ret
 

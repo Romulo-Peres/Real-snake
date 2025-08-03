@@ -3,11 +3,10 @@
 ; @returns
 ; ax - 0x1 if the snake ate a fruit, 0 otherwise
 move:
-    ; checking if the snake is going right
     mov ax, [direction]
-    cmp ax, DIRECTION_RIGHT
+    cmp ax, DIRECTION_RIGHT  ; checking if the snake is going right
 
-    jne not_direction_right
+    jne .right_direction_else_block
 
     call load_head_position_and_place_body_char
 
@@ -24,94 +23,99 @@ move:
     ; save the new X position
     mov [head_x_pos], bx
 
-    jmp move_end
-not_direction_right:
-    ; checking if the snake is going down
-    cmp ax, DIRECTION_DOWN
+    jmp .after_move
 
-    jne not_direction_down
+    .right_direction_else_block:
+        cmp ax, DIRECTION_DOWN ; checking if the snake is going down
+        jne .down_direction_else_block
 
-    call load_head_position_and_place_body_char
+        call load_head_position_and_place_body_char
 
-    add cx, 0x2
+        add cx, 0x2
 
-    ; move a snake head char at the new head position
-    mov dx, SNAKE_HEAD_CHAR
-    call place_element_at
-    push ax
+        ; move a snake head char at the new head position
+        mov dx, SNAKE_HEAD_CHAR
+        call place_element_at
+        push ax
 
-    call video_pos_to_pos
+        call video_pos_to_pos
 
-    mov [head_y_pos], cx
+        mov [head_y_pos], cx
 
-    jmp move_end
-not_direction_down:
-    ; checking if the snake is going up
-    cmp ax, DIRECTION_UP
+        jmp .after_move
 
-    jne not_direction_up
+    .down_direction_else_block:
+        ; checking if the snake is going up
+        cmp ax, DIRECTION_UP
+        jne .up_direction_else_block
 
-    call load_head_position_and_place_body_char
+        call load_head_position_and_place_body_char
 
-    sub cx, 0x2
-    ; move a snake head char at the new head position
-    mov dx, SNAKE_HEAD_CHAR
-    call place_element_at
-    push ax
+        sub cx, 0x2
 
-    call video_pos_to_pos
+        ; move a snake head char at the new head position
+        mov dx, SNAKE_HEAD_CHAR
+        call place_element_at
+        push ax
 
-    mov [head_y_pos], cx
+        call video_pos_to_pos
 
-    jmp move_end
-not_direction_up:
-    mov bx, 0x2
-    call load_position
+        mov [head_y_pos], cx
 
-    call pos_to_video_pos
+        jmp .after_move
 
-    mov dx, SNAKE_BODY_CHAR
-    call place_element_at
+    .up_direction_else_block:
+        mov bx, 0x2
+        call load_position
 
-    ; move the head to left
-    sub bx, 0x2
+        call pos_to_video_pos
 
-    mov dx, SNAKE_HEAD_CHAR
-    call place_element_at
-    push ax
+        mov dx, SNAKE_BODY_CHAR
+        call place_element_at
 
-    call video_pos_to_pos
+        ; move the head to left
+        sub bx, 0x2
+
+        mov dx, SNAKE_HEAD_CHAR
+        call place_element_at
+        push ax
+
+        call video_pos_to_pos
     
-    mov [head_x_pos], bx
-move_end:
-    pop ax
-    call check_collision
+        mov [head_x_pos], bx
+    
+    .after_move:
+        pop ax
+        call check_collision
 
-    ; verify if the snake ate a fruit  
-    cmp ah, 0x1
-    jne remove_snake_tail
+        ; verify if the snake ate a fruit  
+        cmp ah, 0x1
+        jne .remove_snake_tail
 
-    ; add the growth factor
-    add WORD [pending_body], FRUIT_GROWTH_FACTOR
-    dec WORD [pending_body]
+        ; add the growth factor
+        add WORD [pending_body], FRUIT_GROWTH_FACTOR
+        dec WORD [pending_body]
 
-    mov ax, 0x1
+        mov ax, 0x1
 
-    jmp move_return
-remove_snake_tail:
-    ; confirm whether the growth factor is no longer present
-    cmp WORD [pending_body], 0x0
-    jne decrement_pending_body
+        jmp .end
 
-    call remove_tail
+    .remove_snake_tail:
+        ; confirm whether the growth factor is no longer present
+        cmp WORD [pending_body], 0x0
+        jne .decrement_pending_body
 
-    mov ax, 0x0
+        call remove_tail
 
-    jmp move_return
-decrement_pending_body:
-    dec WORD [pending_body]
-move_return:
-    ret
+        mov ax, 0x0
+
+        jmp .end
+
+    .decrement_pending_body:
+        dec WORD [pending_body]
+    
+    .end:
+        ret
 
 remove_tail:
     ; load tail position
@@ -128,51 +132,51 @@ remove_tail:
 
     ; check if the tail is going right
     cmp ax, DIRECTION_RIGHT
-    jne not_tail_dir_right
+    jne .tail_going_right_else_block
 
     add bx, 0x2
 
-    jmp remove_tail_end
-not_tail_dir_right:
-    ; check if the tail is going left
-    cmp ax, DIRECTION_LEFT
+    jmp .remove_tail_end
 
-    jne not_tail_dir_left
+    .tail_going_right_else_block:
+        cmp ax, DIRECTION_LEFT  ; check if the tail is going left
+        jne .tail_going_left_else_block
 
-    sub bx, 0x2
+        sub bx, 0x2
     
-    jmp remove_tail_end
-not_tail_dir_left:
-    ; check if the tail is going down
-    cmp ax, DIRECTION_DOWN
+        jmp .remove_tail_end
     
-    jne not_tail_dir_down
+    .tail_going_left_else_block:
+        cmp ax, DIRECTION_DOWN  ; check if the tail is going down
+        jne .tail_going_down_else_block
 
-    add cx, 0x2
+        add cx, 0x2
     
-    jmp remove_tail_end
-not_tail_dir_down:
-    sub cx, 0x2
-remove_tail_end:
-    call video_pos_to_pos
+        jmp .remove_tail_end
 
-    mov [tail_x_pos], bx
-    mov [tail_y_pos], cx
+    .tail_going_down_else_block:
+        sub cx, 0x2
 
-    ; check if the current tail position is
-    ; where the head made a curve in the past
-    mov ax, bx
-    mov bx, cx
-    call check_curve
+    .remove_tail_end:
+        call video_pos_to_pos
 
-    cmp ah, 0x1
-    jne remove_tail_return
+        mov [tail_x_pos], bx
+        mov [tail_y_pos], cx
 
-    ; save the new direction
-    mov ah, 0x0
-    mov [tail_direction], ax
+        ; check if the current tail position is
+        ; where the head made a curve in the past
+        mov ax, bx
+        mov bx, cx
+        call check_curve
 
-remove_tail_return:
-    ret
+        cmp ah, 0x1
+        jne .return
+
+        ; save the new direction
+        mov ah, 0x0
+        mov [tail_direction], ax
+
+    .return:
+        ret
 
     pending_body dw 0x0
