@@ -1,8 +1,13 @@
     org 0x7C00
 
+    jmp loader_begin
+
     %include "includes/constants.asm"
+    %include "src/environment-setup.asm"
 
     BITS 16
+
+loader_begin:
 
     ; set video mode
     mov ah, 0x0
@@ -21,21 +26,16 @@
 	
     ; load the game from pendrive
     mov ah, 0x02
-    mov al, 3
+    mov al, 4
     mov ch, 0
     mov cl, 2
     mov dh, 0
     mov dl, 0x80
     int 0x13
 
-    ; setting up the stack segment
-    mov bx, STACK_BASE_ADDR
-    mov ss, bx
-    mov sp, STACK_POINTER_ADDR
-    mov bp, sp
+    configure_stack_segment
 
-    mov bx, GAME_SEGMENT
-    mov ds, bx
+    call configure_data_segment
 
     ; make the processor execute the game
     jmp GAME_SEGMENT:0x0

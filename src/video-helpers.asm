@@ -47,3 +47,20 @@ video_pos_to_pos:
     pop ax
 
     ret
+
+
+clear_video_buffer:
+    mov bx, 0xB800
+    mov es, bx
+
+    xor bx, bx
+
+    .clear_loop:
+        mov BYTE [es:bx], 0x0
+
+        inc bx
+
+        cmp bx, VIDEO_BUFFER_WIDTH * VIDEO_BUFFER_HEIGHT * 2
+        jl .clear_loop
+
+    ret

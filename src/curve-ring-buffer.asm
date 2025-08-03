@@ -143,3 +143,10 @@ position_not_equal_end:
 
     read_ptr dw 0x0
     write_ptr dw 0x0
+
+
+clear_ring_buffer:
+    mov WORD [read_ptr], 0x0
+    mov WORD [write_ptr], 0X0
+
+    ret

@@ -132,6 +132,16 @@ border_game_over:
 check_game_borders_end:
     ret
 
+reset_positions_and_direction:
+    mov WORD [direction], DIRECTION_RIGHT
+    mov WORD [head_x_pos], HEAD_X_START_POS
+    mov WORD [head_y_pos], HEAD_Y_START_POS
+    mov WORD [tail_x_pos], TAIL_X_START_POS
+    mov WORD [tail_y_pos], TAIL_Y_START_POS
+    mov WORD [tail_direction], DIRECTION_RIGHT
+
+    ret
+
     direction dw DIRECTION_RIGHT
     head_x_pos dw HEAD_X_START_POS
     head_y_pos dw HEAD_Y_START_POS

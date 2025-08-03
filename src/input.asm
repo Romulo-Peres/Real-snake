@@ -4,7 +4,7 @@
 ; cx - on right handler
 ; dx - on down handler
 ; di - on reset
-;
+; si - on try again
 ; @returns 
 ; ax - the selected handler, 0x0 if invalid or no user input
 keyboard_input:
@@ -78,7 +78,12 @@ not_down:
     mov ax, di
     jmp input_end
 not_reset:
+    cmp al, 'T'
+    jne not_try_again
 
+    mov ax, si
+    jmp input_end
+not_try_again:
     ; return 0x0 if invalid
     ; or no user input
     mov ax, 0x0

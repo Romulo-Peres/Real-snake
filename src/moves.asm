@@ -54,7 +54,6 @@ not_direction_down:
     call load_head_position_and_place_body_char
 
     sub cx, 0x2
-
     ; move a snake head char at the new head position
     mov dx, SNAKE_HEAD_CHAR
     call place_element_at

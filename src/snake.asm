@@ -12,15 +12,18 @@
     %include "src/generate_fruit.asm"
     %include "src/curve-ring-buffer.asm"
     %include "src/moves.asm"
-    %include "src/setup.asm"
+    %include "src/snake-setup.asm"
     %include "src/game-over-panel.asm"
     %include "src/text.asm"
+    %include "src/environment-setup.asm"
 
 snake_begin:
     mov bx, 0xB800
     mov es, bx
     mov bx, 0x0
 
+    call clear_ring_buffer
+    call reset_positions_and_direction
     call setup_snake
 
     mov bx, 80
@@ -33,6 +36,7 @@ game_loop:
     mov cx, on_right
     mov dx, on_down
     mov di, on_reset
+    mov si, on_try_again
     call keyboard_input
 
     ; check if it is game over
@@ -49,7 +53,7 @@ game_loop:
     jmp move_snake
 game_over:
     cmp WORD [game_over_flag], 0x2
-    je check_input_for_reset
+    je check_for_game_over_input
 
     mov ax, VIDEO_BUFFER_WIDTH
     mov bx, VIDEO_BUFFER_HEIGHT
@@ -59,13 +63,18 @@ game_over:
 
     mov WORD [game_over_flag], 0x2
 
-check_input_for_reset:
-    ; only execute user input handler
-    ; if the input is to reset the processor
-    cmp ax, di
-    jne next_loop
+check_for_game_over_input:
+    cmp ax, on_try_again
+    jne .else_block
 
-    call ax ; reset the processor
+    jmp .execute_handler
+
+    .else_block:
+        cmp ax, on_reset
+        jne next_loop
+
+    .execute_handler:
+        call ax
 move_snake:
     call check_game_borders
     mov WORD [game_over_flag], ax
@@ -87,6 +96,16 @@ on_reset:
 	mov ds, ax
 	mov word [0x472], 0
 	jmp 0FFFFh:0000h
+
+on_try_again:
+    mov WORD [game_over_flag], 0x0
+
+    configure_stack_segment
+    call configure_data_segment
+
+    call clear_video_buffer
+
+    jmp GAME_SEGMENT:0x0
 
 
     game_over_flag dw 0x0
