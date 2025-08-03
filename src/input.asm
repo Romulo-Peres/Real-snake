@@ -85,6 +85,20 @@ keyboard_input:
         jmp .end
 
     .try_again_command_else_block:
+        cmp al, 'F' ; check if it is the boost command
+        jne .boost_command_else_block
+
+        cmp BYTE [snake_speed], NORMAL_SPEED
+        je .enable_boosting
+
+        mov BYTE [snake_speed], NORMAL_SPEED
+        jmp .boost_command_else_block
+
+    .enable_boosting:
+        mov BYTE [snake_speed], BOOSTING
+
+    
+    .boost_command_else_block:
         ; return 0x0 if invalid or no user input is available
         mov ax, 0x0
 

@@ -93,6 +93,7 @@ snake_begin:
         inc WORD [points]
 
     .next_loop:
+        mov dl, [snake_speed]
         call sleep
         jmp .game_loop
 
@@ -109,6 +110,8 @@ on_try_again:
     configure_stack_segment
     call configure_data_segment
     call clear_video_buffer
+    mov WORD [points], 0x0
+    mov BYTE [snake_speed], NORMAL_SPEED
 
     mov di, complete_score_label
 

@@ -27,6 +27,7 @@ tail_x_pos dw TAIL_X_START_POS
 tail_y_pos dw TAIL_Y_START_POS
 tail_direction dw DIRECTION_RIGHT
 pending_body dw 0x0
+snake_speed db NORMAL_SPEED
 
 ; ===== Game Values =====
 last_fruit_offset dw 0x0

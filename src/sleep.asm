@@ -1,6 +1,8 @@
 %define FIRST_TIMER_COUNTER 1
-%define TIMER_COUNTER_THRESHOLD 2
+%define TIMER_THRESHOLD 2
 
+; @params
+; dx - timer threshold
 sleep:
     ; save used registers
     ; and allocate memory
@@ -9,7 +11,9 @@ sleep:
     push cx
     push dx
     mov bp, sp
-    sub sp, 0x1
+    sub sp, 0x2
+
+    mov [bp-TIMER_THRESHOLD], dl
 
     ; get timer counter
     mov ah, 0x0
@@ -27,7 +31,9 @@ sleep:
         mov al, [bp-FIRST_TIMER_COUNTER]
         sub dl, al
 
-        cmp dl, TIMER_COUNTER_THRESHOLD
+        mov al, [bp-TIMER_THRESHOLD]
+
+        cmp dl, al
 
         jge .end
 
