@@ -23,3 +23,12 @@
 %define BOOSTING 1
 %define TRUE 1
 %define FALSE 0
+
+%define PAUSE_COMMAND 1
+%define TRY_AGAIN_COMMAND 2
+%define LEFT_COMMAND 3
+%define RIGHT_COMMAND 4
+%define UP_COMMAND 5
+%define DOWN_COMMAND 6
+%define BOOST_COMMAND 7
+%define RESET_COMMAND 8

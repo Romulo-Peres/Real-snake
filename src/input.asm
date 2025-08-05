@@ -1,12 +1,5 @@
-; @params
-; ax - on left handler
-; bx - on up handler
-; cx - on right handler
-; dx - on down handler
-; di - on reset
-; si - on try again
 ; @returns 
-; ax - the selected handler, 0x0 if invalid or no user input
+; ax - PAUSE_COMMAND, TRY_AGAIN_COMMAND, LEFT_COMMAND, RIGHT_COMMAND, UP_COMMAND, DOWN_COMMAND, BOOST_COMMAND, RESET_COMMAND or 0
 keyboard_input:
     ; save registers and allocate memory
     push bp
@@ -46,67 +39,57 @@ keyboard_input:
         cmp al, 'A' ; check if it is Left command
         jne .left_command_else_block
 
-        mov ax, [bp-3]
+        mov ax, LEFT_COMMAND
         jmp .end
 
     .left_command_else_block:
         cmp al, 'W' ; check if it is Up command
         jne .up_command_else_block
 
-        mov ax, bx
+        mov ax, UP_COMMAND
         jmp .end
 
     .up_command_else_block:
         cmp al, 'D' ; check if it is Right command
         jne .right_command_else_block
 
-        mov ax, cx
+        mov ax, RIGHT_COMMAND
         jmp .end
 
     .right_command_else_block:
         cmp al, 'S' ; check if it is Down command
         jne .down_command_else_block
 
-        mov ax, dx
+        mov ax, DOWN_COMMAND
         jmp .end
 
     .down_command_else_block:
         cmp al, 'Z' ; check if it is reset command
         jne .reset_command_else_block
 
-        mov ax, di
+        mov ax, RESET_COMMAND
         jmp .end
 
     .reset_command_else_block:
         cmp al, 'T' ; check if it is try again command
         jne .try_again_command_else_block
 
-        mov ax, si
+        mov ax, TRY_AGAIN_COMMAND
         jmp .end
 
     .try_again_command_else_block:
-        cmp al, 'P'
+        cmp al, 'P' ; check if it is the pause command
         jne .pause_command_else_block
 
-        xor BYTE [game_paused], TRUE
-        call draw_game_status
-
-        mov ax, 0x0
-
+        mov ax, PAUSE_COMMAND
         jmp .end
 
     .pause_command_else_block:
         cmp al, 'F' ; check if it is the boost command
         jne .boost_command_else_block
 
-        cmp BYTE [snake_speed], NORMAL_SPEED
-        je .enable_boosting
-
-        mov BYTE [snake_speed], NORMAL_SPEED
-        jmp .boost_command_else_block
-
-    .enable_boosting:
-        mov BYTE [snake_speed], BOOSTING
+        mov ax, BOOST_COMMAND
+        jmp .end
     
     .boost_command_else_block:
         ; return 0x0 if invalid or no user input is available

@@ -21,6 +21,7 @@ jmp snake_begin
 %include "src/utilities/itoa.asm"
 %include "src/utilities/strcat.asm"
 %include "src/status-bar.asm"
+%include "src/commands.asm"
 
 snake_begin:
     mov bx, 0xB800
@@ -37,33 +38,28 @@ snake_begin:
     call generate_fruit
 
     .game_loop:
-        mov ax, on_left
-        mov bx, on_up
-        mov cx, on_right
-        mov dx, on_down
-        mov di, on_reset
-        mov si, on_try_again
         call keyboard_input
+
+        ; call the user input handler
+        mov di, ax
+        call handle_command
 
         ; check if it is game over
         cmp WORD [game_over_flag], 0x1
         jge .game_over
 
         cmp BYTE [game_paused], TRUE
-        je .game_loop
+        je .next_loop
 
         ; verify if there is some user input
         cmp ax, 0x0
         je .move_snake
 
-        ; call the user input handler
-        call ax
-
         jmp .move_snake
 
     .game_over:
         cmp WORD [game_over_flag], 0x2
-        je .check_for_game_over_input
+        je .next_loop
 
         mov ax, VIDEO_BUFFER_WIDTH
         mov bx, VIDEO_BUFFER_HEIGHT
@@ -72,19 +68,7 @@ snake_begin:
         call draw_game_over_message
 
         mov WORD [game_over_flag], 0x2
-
-    .check_for_game_over_input:
-        cmp ax, on_try_again
-        jne .else_block
-
-        jmp .execute_handler
-
-    .else_block:
-        cmp ax, on_reset
-        jne .next_loop
-
-    .execute_handler:
-        call ax
+        jmp .next_loop
 
     .move_snake:
         call check_game_borders
@@ -106,36 +90,4 @@ snake_begin:
         call sleep
         
         jmp .game_loop
-
-on_reset:
-    cli
-	mov ax, 0
-	mov ds, ax
-	mov word [0x472], 0
-	jmp 0FFFFh:0000h
-
-on_try_again:
-    mov WORD [game_over_flag], 0x0
-    mov BYTE [game_paused], FALSE
-
-    configure_stack_segment
-    call configure_data_segment
-    call clear_video_buffer
-    mov WORD [points], 0x0
-    mov BYTE [snake_speed], NORMAL_SPEED
-
-    mov di, complete_final_score_label
-
-    .clear_score_label_loop:
-        cmp BYTE [di], 0x0
-        je .restart_game
-
-        mov BYTE [di], 0x0
-        inc di
-
-        jmp .clear_score_label_loop
-
-    .restart_game:
-        jmp GAME_SEGMENT:0x0
-
 
