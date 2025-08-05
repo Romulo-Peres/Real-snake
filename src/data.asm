@@ -34,6 +34,7 @@ last_fruit_offset dw 0x0
 user_points db '0', 0x0
 game_over_flag dw 0x0
 points dw 0x0
+game_paused dd FALSE
 
 
 ; ===== Data Convertion Specifics =====

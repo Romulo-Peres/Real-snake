@@ -85,6 +85,15 @@ keyboard_input:
         jmp .end
 
     .try_again_command_else_block:
+        cmp al, 'P'
+        jne .pause_command_else_block
+
+        xor BYTE [game_paused], TRUE
+        mov ax, 0x0
+        
+        jmp .end
+
+    .pause_command_else_block:
         cmp al, 'F' ; check if it is the boost command
         jne .boost_command_else_block
 
@@ -96,7 +105,6 @@ keyboard_input:
 
     .enable_boosting:
         mov BYTE [snake_speed], BOOSTING
-
     
     .boost_command_else_block:
         ; return 0x0 if invalid or no user input is available

@@ -46,6 +46,9 @@ snake_begin:
         cmp WORD [game_over_flag], 0x1
         jge .game_over
 
+        cmp BYTE [game_paused], TRUE
+        je .game_loop
+
         ; verify if there is some user input
         cmp ax, 0x0
         je .move_snake
@@ -95,6 +98,7 @@ snake_begin:
     .next_loop:
         mov dl, [snake_speed]
         call sleep
+        
         jmp .game_loop
 
 on_reset:
@@ -106,6 +110,7 @@ on_reset:
 
 on_try_again:
     mov WORD [game_over_flag], 0x0
+    mov BYTE [game_paused], FALSE
 
     configure_stack_segment
     call configure_data_segment
