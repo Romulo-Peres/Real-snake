@@ -1,11 +1,19 @@
 ; ===== Labels =====
 game_over_msg db "Game over", 0x0
 game_over_msg_len equ $-game_over_msg
-score_label db "Final Score: ", 0x0
+final_score_label db "Final Score: ", 0x0
+final_score_label.len equ $-final_score_label
+score_label db "Score: ", 0x0
 score_label.len equ $-score_label
 options_label db "[T] - try again, [Z] - exit game", 0x0
 options_label.len equ $-options_label
-complete_score_label times 5 dd 0x0
+paused_label db "Paused", 0x0
+paused_label.len equ $-paused_label
+running_label db "Running", 0x0
+running_label.len equ $-running_label
+complete_final_score_label times 5 dd 0x0
+complete_score_label TIMES 5 dd 0x0
+complete_score_label.len equ $-complete_score_label
 
 ; ===== Box Structure =====
 panel_horizontal_bar db "------------------------------------", 0x0
@@ -13,6 +21,10 @@ panel_horizontal_bar.len equ $-panel_horizontal_bar
 panel_vertical_bar db "|||||||", 0x0
 panel_vertical_bar.len equ $- panel_vertical_bar
 empty_text_string times panel_horizontal_bar.len db ' '
+db 0x0
+status_panel_horizontal_bar TIMES VIDEO_BUFFER_WIDTH db '-'
+db 0x0
+buffer_width_sized_empty_string TIMES VIDEO_BUFFER_WIDTH db ' '
 db 0x0
 
 ; ===== Data Structure Specifics =====
@@ -35,7 +47,6 @@ user_points db '0', 0x0
 game_over_flag dw 0x0
 points dw 0x0
 game_paused dd FALSE
-
 
 ; ===== Data Convertion Specifics =====
 converted_value db 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0

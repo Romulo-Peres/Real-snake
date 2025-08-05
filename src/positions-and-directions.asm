@@ -130,7 +130,7 @@ check_game_borders:
     .check_vertical_borders:
         cmp ax, VIDEO_BUFFER_HEIGHT
         jge .border_game_over
-        cmp ax, 0x0
+        cmp ax, 0x2
         jl .border_game_over
 
         mov ax, 0x0

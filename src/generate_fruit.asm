@@ -47,6 +47,12 @@ generate_fruit:
     mov dx, 0x2
     imul dx
 
+    cmp ax, VIDEO_BUFFER_WIDTH * 4
+    jg .no_conflict_with_status_bar
+
+    mov ax, VIDEO_BUFFER_WIDTH * 4 + 10
+
+    .no_conflict_with_status_bar:
     ; apply a mask to make odd offsets impossible
     and ax, 0xFFFE
 

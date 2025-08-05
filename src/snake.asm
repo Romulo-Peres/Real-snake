@@ -17,14 +17,17 @@ jmp snake_begin
 %include "src/text.asm"
 %include "src/environment-setup.asm"
 %include "src/data.asm"
+%include "src/utilities/data-manipulation.asm"
 %include "src/utilities/itoa.asm"
 %include "src/utilities/strcat.asm"
+%include "src/status-bar.asm"
 
 snake_begin:
     mov bx, 0xB800
     mov es, bx
     mov bx, 0x0
 
+    call draw_game_status
     call clear_ring_buffer
     call reset_positions_and_direction
     call setup_snake
@@ -93,7 +96,10 @@ snake_begin:
 
         cmp ax, 0x1
         jne .next_loop
+
         inc WORD [points]
+        call draw_game_status
+
 
     .next_loop:
         mov dl, [snake_speed]
@@ -118,7 +124,7 @@ on_try_again:
     mov WORD [points], 0x0
     mov BYTE [snake_speed], NORMAL_SPEED
 
-    mov di, complete_score_label
+    mov di, complete_final_score_label
 
     .clear_score_label_loop:
         cmp BYTE [di], 0x0

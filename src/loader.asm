@@ -26,7 +26,7 @@ loader_begin:
 	
     ; load the game from pendrive
     mov ah, 0x02
-    mov al, 4
+    mov al, 5
     mov ch, 0
     mov cl, 2
     mov dh, 0

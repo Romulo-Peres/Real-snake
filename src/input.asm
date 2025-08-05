@@ -89,8 +89,10 @@ keyboard_input:
         jne .pause_command_else_block
 
         xor BYTE [game_paused], TRUE
+        call draw_game_status
+
         mov ax, 0x0
-        
+
         jmp .end
 
     .pause_command_else_block:

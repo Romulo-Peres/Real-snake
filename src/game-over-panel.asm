@@ -14,8 +14,8 @@ draw_game_over_message:
     mov dx, VIDEO_BUFFER_HEIGHT / 2 - 2
     call write_horizontal_text_at
 
-    mov di, complete_score_label
-    mov si, score_label
+    mov di, complete_final_score_label
+    mov si, final_score_label
     call strcat
 
     ; save the length of score_label
@@ -24,7 +24,7 @@ draw_game_over_message:
     mov di, [bp-1]
     call itoa
 
-    mov di, complete_score_label
+    mov di, complete_final_score_label
     mov si, converted_value
     call strcat
 
@@ -40,7 +40,7 @@ draw_game_over_message:
     neg ax
     add ax, VIDEO_BUFFER_WIDTH / 2
 
-    mov di, complete_score_label
+    mov di, complete_final_score_label
     mov si, ax
     mov dx, VIDEO_BUFFER_HEIGHT / 2
     call write_horizontal_text_at
