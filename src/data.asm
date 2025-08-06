@@ -14,6 +14,7 @@ running_label.len equ $-running_label
 complete_final_score_label times 5 dd 0x0
 complete_score_label TIMES 5 dd 0x0
 complete_score_label.len equ $-complete_score_label
+unpause_countdown dw 0x0
 
 ; ===== Box Structure =====
 panel_horizontal_bar db "------------------------------------", 0x0

@@ -132,8 +132,32 @@ on_right:
         ret
 
 on_pause:
-    xor BYTE [game_paused], TRUE
-    ;call draw_game_status
+    cmp BYTE [game_paused], TRUE
+    jne .end
+
+    mov dl, 3
+
+    .countdown_loop: 
+        cmp dl, 0
+        je .end
+
+        call draw_status_bar
+        dec dl
+
+        push dx
+
+        mov dx, 7
+        call sleep
+
+        pop dx
+
+        jmp .countdown_loop
+
+    .end:
+        xor BYTE [game_paused], TRUE
+
+        mov dl, 0
+        call draw_status_bar
 
     ret
 

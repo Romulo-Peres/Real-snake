@@ -28,7 +28,8 @@ snake_begin:
     mov es, bx
     mov bx, 0x0
 
-    call draw_game_status
+    mov dl, 0
+    call draw_status_bar
     call clear_ring_buffer
     call reset_positions_and_direction
     call setup_snake
@@ -64,7 +65,6 @@ snake_begin:
         mov ax, VIDEO_BUFFER_WIDTH
         mov bx, VIDEO_BUFFER_HEIGHT
 
-        mov di, [points]
         call draw_game_over_message
 
         mov WORD [game_over_flag], 0x2
@@ -82,7 +82,9 @@ snake_begin:
         jne .next_loop
 
         inc WORD [points]
-        call draw_game_status
+        
+        mov dl, 0
+        call draw_status_bar
 
 
     .next_loop:
