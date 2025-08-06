@@ -65,13 +65,13 @@ draw_player_score:
     mov di, complete_score_label
     mov si, converted_value
     call strcat
-
+    
     pop bx
     add ax, bx
 
     mov si, VIDEO_BUFFER_WIDTH
     sub si, ax
-    and si, 0xFFFE
+    dec si
 
     mov di, complete_score_label
     mov dx, 0
