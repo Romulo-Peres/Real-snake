@@ -58,7 +58,7 @@ The BIOS expects the binary instructions to be written in the first sectors of o
 ### On Linux
 Assumming you are inside the `image` directory, this shell command should do the trick:
 ```sh
-sudo dd if=./image of=/dev/sd[X] bs=512 count=5
+sudo dd if=./image of=/dev/sd[X] bs=512 count=6
 ```
 where `[X]` is the letter assigned to your device. Check it by running the `lsblk` or `fdisk -l` commands.
 
