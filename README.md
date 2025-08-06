@@ -1,5 +1,5 @@
 # What is this ?
-Real snake is a bootable snake game written in assembly language. The project implements random generation of fruits, sandbox borders (you die if you hit it) and in-code configurable parameters, everything in an image of 1KiB, loader included.
+Real snake is a bootable snake game written in assembly language. The project implements random generation of fruits, sandbox borders (you die if you hit it) and in-code configurable parameters, everything in an image of 2KiB, loader included.
 
 As a matter of curiosity, the `real` of real snake refers to the mode that the processor works at the moment it is powered on (real mode). The real snake runs on a processor working on this mode.
 
